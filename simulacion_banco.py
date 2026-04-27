@@ -1,50 +1,42 @@
-# simulacion_banco.py
 import math
 
 class SimulacionBanco:
-    """
-    Modelo discreto, estocástico y dinámico de una línea de espera en un banco
-    con 3 cajeros, llegadas Poisson y servicio Uniforme.
-    """
-    def __init__(self, numeros_aleatorios):
-        self.num_cajeros = 3
-        # Rastrea en qué minuto se desocupa cada uno de los 3 cajeros
+    def __init__(self, numeros_aleatorios, num_cajeros, tasa_llegada_hora, serv_min, serv_max):
+        self.num_cajeros = num_cajeros
         self.estado_cajeros = [0.0] * self.num_cajeros 
         
-        # 40 clientes/hora = 1.5 minutos entre cliente y cliente en promedio
-        self.media_interarribo = 1.5 
+        # λ = tasa_llegada_hora / 60 (clientes por minuto)
+        # Media de interarribo = 1 / λ
+        self.media_interarribo = 60.0 / tasa_llegada_hora 
+        self.serv_min = serv_min
+        self.serv_max = serv_max
         self.numeros_aleatorios = numeros_aleatorios
         
         self.tiempo_espera_total = 0.0
         self.tiempo_ocio_total = 0.0
         self.clientes_atendidos = 0
-        self.registro = [] # Aquí guardaremos los datos para la tabla UI
+        self.registro = []
 
-    def simular(self, tiempo_total_simulacion=120):
+    def simular(self, tiempo_total_simulacion):
         tiempo_reloj = 0.0
-        
-        # Iteramos tomando de 2 en 2 (uno para llegada, otro para servicio)
         for i in range(0, len(self.numeros_aleatorios) - 1, 2):
             u_llegada = self.numeros_aleatorios[i]
             u_servicio = self.numeros_aleatorios[i+1]
             
-            # 1. Proceso Poisson: Tiempo entre llegadas (Exponencial inversa)
+            # Proceso Poisson (Exponencial inversa) 
             t_llegada = -self.media_interarribo * math.log(1 - u_llegada)
             tiempo_reloj += t_llegada
             t_acum = tiempo_reloj
             
             if t_acum > tiempo_total_simulacion:
-                break # Termina la simulación si rebasamos el tiempo límite
+                break
                 
-            # 2. Tiempo de servicio (Uniforme 0 a 1 minuto)
-            t_servicio = u_servicio
+            # Tiempo de servicio Uniforme 
+            t_servicio = self.serv_min + (self.serv_max - self.serv_min) * u_servicio
             
-            # 3. Disciplina FIFO con 3 cajeros
-            # Encontramos el cajero que se desocupa más pronto
             cajero_asignado = self.estado_cajeros.index(min(self.estado_cajeros))
             tiempo_disponible = self.estado_cajeros[cajero_asignado]
             
-            # 4. Cálculo de tiempos de inicio, espera y ocio
             if t_acum >= tiempo_disponible:
                 t_ini = t_acum
                 t_ocio = t_ini - tiempo_disponible
@@ -60,7 +52,6 @@ class SimulacionBanco:
             self.estado_cajeros[cajero_asignado] = t_fin
             self.clientes_atendidos += 1
             
-            # 5. Guardar registro para la Interfaz Gráfica
             self.registro.append({
                 "Cliente": self.clientes_atendidos,
                 "t_lleg": round(t_llegada, 2),
