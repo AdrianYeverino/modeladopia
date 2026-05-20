@@ -1,41 +1,108 @@
-# Simulador de Sistemas Dinámicos: Línea de Espera en Banco 🏦
+# Simulador de Sistemas Dinámicos: Línea de Espera en Banco
 
-Este proyecto es el **Producto Integrador de Aprendizaje (PIA)** para la unidad de aprendizaje de *Modelado y Simulación de Sistemas Dinámicos*. Consiste en un simulador estocástico y discreto (orientado a eventos) desarrollado en Python con interfaz gráfica de usuario (GUI).
+Este proyecto es el **Producto Integrador de Aprendizaje (PIA)** para la unidad de aprendizaje de *Modelado y Simulación de Sistemas Dinámicos*. Consiste en un simulador estocástico discreto (orientado a eventos) desarrollado en Python con interfaz gráfica de usuario (GUI) construida con Tkinter.
 
-## 📖 Contexto del Proyecto (Problema 5.13)
+---
 
-El software resuelve analítica y computacionalmente el siguiente problema de teoría de colas (M/M/s):
+## Contexto del Proyecto (Problema 5.13)
+
+El software resuelve el siguiente problema clásico de teoría de colas (M/M/s):
 
 > *"Un banco emplea 3 cajeros para servir a sus clientes. Los clientes arriban de acuerdo a un proceso Poisson a una razón de media de 40 por hora. Si un cliente encuentra todos los cajeros ocupados, entonces se incorpora a la cola que alimenta a todos los cajeros. El tiempo que dura la transacción entre un cajero y un cliente sigue una distribución uniforme entre 0 y 1 minuto."*
 
-**Objetivos de la Simulación:**
+**Objetivos de la simulación:**
 1. Determinar el **tiempo promedio en el sistema** (W).
-2. Determinar la **cantidad promedio de clientes en el sistema** (L).
+2. Determinar la **cantidad promedio de clientes en el sistema** (L) mediante la Ley de Little.
 
-## ✨ Características del Software
+---
 
-* **Generador LCG:** Implementación matemática del Algoritmo Congruencial Lineal para la generación de números pseudoaleatorios.
-* **Validación Estadística:** Módulo integrado que evalúa la calidad de los números generados mediante pruebas de Uniformidad (Chi-Cuadrada, Kolmogorov-Smirnov) e Independencia (Corridas, Póker).
-* **Motor de Simulación Discreta:** Algoritmo que procesa eventos paso a paso, gestionando el estado de los servidores (cajeros), los tiempos de llegada y tiempos de servicio.
-* **Interfaz Gráfica (UI):** Entorno visual interactivo construido con `Tkinter` que permite parametrizar las variables exógenas del sistema y visualizar los resultados en tiempo real.
-* **Exportación de Datos:** Capacidad de exportar el registro detallado de eventos discretos a archivos Excel (`.xlsx`) y `.csv`.
+## Características del Software
 
-## 🗂️ Estructura del Proyecto
+- **Generador LCG:** Implementación del Algoritmo Congruencial Lineal (LCG) para generar números pseudoaleatorios configurables por el usuario (semilla, multiplicador, incremento, módulo).
+- **Validación Estadística:** Dos pruebas de hipótesis que validan la calidad de los números generados: Prueba de Medias (uniformidad) y Prueba de Corridas (independencia).
+- **Motor de Simulación Discreta:** Algoritmo paso a paso que gestiona llegadas, asignación de cajeros y tiempos de servicio aplicando distribuciones inversas (Exponencial para llegadas, Uniforme para servicio).
+- **Interfaz Gráfica (UI):** Panel de control construido con Tkinter/ttk que permite parametrizar el LCG, ejecutar la simulación y visualizar los resultados en una tabla de 12 columnas.
+- **Exportación a Excel:** Genera un archivo `.xlsx` con 5 hojas: Configuracion, Numeros LCG, Simulacion, Pruebas y Resultados.
 
-El proyecto está diseñado bajo una arquitectura modular separando la lógica matemática de la interfaz visual:
+---
 
-* `generador.py`: Contiene la clase `GeneradorLCG` con las variables de semilla, multiplicador, incremento y módulo.
-* `estadisticas.py`: Funciones matemáticas para el cálculo de los valores observados y esperados, así como estadísticos críticos.
-* `simulacion_banco.py`: Núcleo dinámico de la simulación. Recibe los aleatorios y aplica las distribuciones inversas (Exponencial y Uniforme).
-* `main_ui.py`: Archivo principal. Despliega la interfaz gráfica, agrupa los módulos y maneja las interacciones del usuario.
-* `requirements.txt`: Lista de dependencias externas.
+## Estructura del Proyecto
 
-## 🚀 Requisitos e Instalación
+```
+modeladopia/
+├── generador.py          # Clase GeneradorLCG: algoritmo LCG
+├── estadisticas.py       # Prueba de Medias y Prueba de Corridas
+├── simulacion_banco.py   # Motor de simulación discreta (M/M/3)
+├── main_ui.py            # Interfaz gráfica principal (Tkinter)
+└── requirements.txt      # Dependencias externas (pandas, openpyxl)
+```
 
-Para ejecutar este simulador, necesitas tener instalado **Python 3.8 o superior**.
+---
 
-### Paso 1: Instalar dependencias
-Abre tu terminal o consola de comandos en la carpeta raíz del proyecto y ejecuta el siguiente comando para instalar las librerías necesarias para la manipulación de datos y exportación:
+## Tecnologías Utilizadas
+
+| Tecnología | Uso |
+|---|---|
+| Python 3.8+ | Lenguaje base |
+| Tkinter / ttk | Interfaz gráfica de usuario |
+| pandas 2.2.2 | Exportación de datos a Excel |
+| openpyxl 3.1.2 | Motor de escritura de archivos .xlsx |
+| math (stdlib) | Cálculos matemáticos (log, sqrt) |
+
+> La simulación en sí no depende de librerías externas: el LCG, las pruebas estadísticas y el motor de simulación están implementados desde cero en Python puro.
+
+---
+
+## Requisitos e Instalación
+
+Necesitas **Python 3.8 o superior** instalado.
+
+### 1. Instalar dependencias
 
 ```bash
 pip install -r requirements.txt
+```
+
+### 2. Ejecutar la aplicación
+
+```bash
+python main_ui.py
+```
+
+---
+
+## Uso
+
+1. Al abrir la aplicación, los parámetros del LCG tienen valores predeterminados (X0=7, a=21, c=211, m=10000, n=500).
+2. Presiona **CORRER SIMULACION** para generar los números, validarlos y ejecutar la simulación.
+3. La tabla muestra el paso a paso de cada cliente (hasta ~250 con 500 números).
+4. Usa **Ver pruebas estadisticas** para revisar los resultados de Medias y Corridas.
+5. Usa **Exportar todo a Excel** para guardar todos los datos en un archivo `.xlsx`.
+
+---
+
+## Parámetros Fijos del Sistema (Problema 5.13)
+
+| Parámetro | Valor |
+|---|---|
+| Cajeros (servidores) | 3 |
+| Tasa de llegada (lambda) | 40 clientes/hora |
+| Media entre llegadas | 1.5 minutos |
+| Distribución de servicio | Uniforme [0, 1] minutos |
+
+---
+
+## Indicadores Calculados
+
+| Indicador | Descripción | Fórmula |
+|---|---|---|
+| W | Tiempo promedio en el sistema | W = suma(T_sistema) / atendidos |
+| L | Clientes promedio en el sistema | L = lambda * W (Ley de Little) |
+| Espera promedio | Tiempo promedio en cola | suma(T_espera) / atendidos |
+| Ocio total | Minutos acumulados sin atender | suma(T_ocio) por los 3 cajeros |
+
+---
+
+## Equipo
+
+PIA Equipo 3 — Modelado y Simulación de Sistemas Dinámicos, Sexto Semestre.
