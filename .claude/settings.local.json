@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe main_ui.py)",
+      "PowerShell(.\\\\.venv\\\\Scripts\\\\python.exe -m pip install pandas openpyxl --quiet 2>&1 | Select-Object -Last 5)"
+    ]
+  }
+}

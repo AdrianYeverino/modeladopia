@@ -1,13 +1,30 @@
+# =============================================================================
 # generador.py
-# Módulo para la generación de números pseudoaleatorios.
+# -----------------------------------------------------------------------------
+# Modulo encargado de generar numeros pseudoaleatorios U_i en el intervalo (0,1)
+# mediante el Algoritmo Congruencial Lineal (LCG) visto en la Presentacion 6.
+#
+# Formula matematica:
+#     X_{i+1} = (a * X_i + c) mod m
+#     U_i    = X_{i+1} / m
+#
+# Donde:
+#     X_0 = Semilla inicial
+#     a   = Multiplicador
+#     c   = Incremento
+#     m   = Modulo (define el periodo maximo del generador)
+# =============================================================================
+
 
 class GeneradorLCG:
     """
-    Clase que implementa el Algoritmo Congruencial Lineal (LCG).
-    Fórmula: X_{i+1} = (a * X_i + c) mod m
+    Generador Congruencial Lineal con parametros pequenios y legibles
+    para facilitar la explicacion en clase.
     """
-    def __init__(self, semilla, a, c, m):
-        # Parámetros del modelo matemático
+
+    def __init__(self, semilla=7, a=21, c=211, m=10000):
+        # Se usan valores pequenios pero validos matematicamente para evitar
+        # ciclos inmediatos y a la vez mantener numeros faciles de leer.
         self.semilla = semilla
         self.a = a
         self.c = c
@@ -15,20 +32,21 @@ class GeneradorLCG:
 
     def generar(self, cantidad):
         """
-        Genera una lista de números pseudoaleatorios (U_i) entre 0 y 1.
+        Genera una lista con 'cantidad' numeros U_i pseudoaleatorios.
+        Cada U_i se obtiene normalizando X_{i+1} entre m, asi U_i pertenece a (0,1).
         """
-        numeros_aleatorios = []
+        numeros = []
         x_actual = self.semilla
-        
+
         for _ in range(cantidad):
-            # Aplicación de la fórmula congruencial lineal
+            # Paso 1: Aplicar la formula congruencial lineal.
             x_siguiente = (self.a * x_actual + self.c) % self.m
-            
-            # Normalización para obtener un número entre 0 y 1 (U_i)
+
+            # Paso 2: Normalizar el entero al intervalo (0,1) dividiendo entre m.
             u_i = x_siguiente / self.m
-            numeros_aleatorios.append(u_i)
-            
-            # Actualizar el estado para la siguiente iteración
+            numeros.append(u_i)
+
+            # Paso 3: Actualizar el estado para la siguiente iteracion.
             x_actual = x_siguiente
-            
-        return numeros_aleatorios
+
+        return numeros
