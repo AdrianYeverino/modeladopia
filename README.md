@@ -105,4 +105,4 @@ python main_ui.py
 
 ## Equipo
 
-PIA Equipo 3 — Modelado y Simulación de Sistemas Dinámicos, Sexto Semestre.
+PIA Equipo 5 — Modelado y Simulación de Sistemas Dinámicos, Sexto Semestre.
